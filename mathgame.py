@@ -1,6 +1,4 @@
-from random import randint
-import pygame
-
+from methods import *
 
 def find_correct(q, num):
     """
@@ -22,14 +20,14 @@ def find_correct(q, num):
     if q == 3:
         return num == 7 == 0
     if q == 4:
-        return num in [2, 3, 5, 7, 11, 13, 17,
+        return num in {2, 3, 5, 7, 11, 13, 17,
                        19, 23, 29, 31, 37, 41,
                        43, 47, 53, 59, 61, 67,
-                       71, 73, 79, 83, 89, 97]
+                       71, 73, 79, 83, 89, 97}
     if q == 5:
         return num > 50
     if q == 6:
-        return num in [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+        return num in {1, 4, 9, 16, 25, 36, 49, 64, 81, 100}
     if q == 7:
         return num < 10
     if q == 8:
@@ -38,13 +36,7 @@ def find_correct(q, num):
         return num % 4 == 0
 
 
-def print_ui(screen, myfont, text, x, y):
-    line = myfont.render(text, False, (255, 255, 255))
-    text_rect = line.get_rect(center=(x, y))
-    screen.blit(line, text_rect)
-
-
-class MathField:
+class MathGame:
     """
     Поле для игры №1 (на знание свойств чисел).
 
@@ -59,6 +51,7 @@ class MathField:
         score (int): Счет.
         multiplier (int): Множитель, на который домножаются очки игрока. Увеличивается с продолжительностью игры.
     """
+
     def __init__(self):
         """
         Создает новое поле. Почти все атрибуты нулевые или пустые, жизней 5, множитель равен 1.
@@ -92,12 +85,14 @@ class MathField:
             screen (pygame.Surface): Экран.
             myfont (pygame.font.Font): Используемый шрифт.
         """
-        self.numbers = [[randint(1, 100) for i in range(5)] for j in range(5)]
-        self.question = randint(0, 9)
+        self.numbers = [[randint(1, 100) for _ in range(5)] for _ in range(5)]
+        self.answers = set()
+        while len(self.answers) == 0:
+            self.question = randint(0, 9)
+            self.set_answers()
         self.selected = set()
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 0, 500, 100))
-        print_ui(screen, myfont, questions[self.question], 250, 60)
-        self.set_answers()
+        print_ui(screen, myfont, questions[self.question], 250, 60, (255, 255, 255))
 
     def draw_field(self, screen):
         """
@@ -198,14 +193,14 @@ class MathField:
                 self.selected.add(position)
                 self.score += 50 * self.multiplier
                 pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(300, 400, 200, 100))
-                print_ui(screen, myfont, "Счёт: " + str(self.score).zfill(5), 400, 475)
+                print_ui(screen, myfont, ("Счёт: " + str(self.score)).rjust(11), 400, 475, (255, 255, 255))
             else:
                 print("Уже выбрано!")
         else:
             print("Неправильно!")
             self.lives -= 1
             pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
-            print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475)
+            print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475, (255, 255, 255))
 
 
 questions = {0: "Выбери все четные числа!",
@@ -217,4 +212,4 @@ questions = {0: "Выбери все четные числа!",
              6: "Выбери все числа-квадраты!",
              7: "Выбери все однозначные числа!",
              8: "Выбери все числа, кратные 3!",
-             9: "Выбери все числа, кратные 4!"} # словарь вопросов
+             9: "Выбери все числа, кратные 4!"}  # словарь вопросов
