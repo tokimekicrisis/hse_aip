@@ -5,21 +5,6 @@ from calcgame import CalcGame
 
 # GAME STATES: "math1", "math2", "rus1", "rus2", "menu", "gameover", "pause"
 
-class Counter:
-    def __init__(self, time):
-        self.time = time
-
-    def go_down(self):
-        self.time -= 1
-
-    def display(self):
-        if self.time > 5:
-            color = (255, 255, 255)
-        else:
-            color = (255, 0, 0)
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 63))
-        print_ui(screen, number_font, str(self.time).ljust(2), 45, 450, color)
-
 
 def show_menu():
     screen.fill((0, 0, 0))
@@ -31,8 +16,8 @@ def show_menu():
     ru1 = Button("", 125, 375, 175, 150)
     ru2 = Button("", 375, 375, 175, 150)
     btns = (mt1, mt2, ru1, ru2)
-    for i in btns:
-        i.display(screen, text_font, pos)
+    for btn in btns:
+        btn.display(screen, text_font, pos)
     return btns
 
 
@@ -46,7 +31,7 @@ def start_game(state):
         return fld
     elif state == "math2":
         fld = CalcGame()
-        fld.display_calc(screen, text_font, pos)
+        fld.refresh(screen, text_font, number_font)
         print_ui(screen, text_font, ("Счёт: " + str(fld.score)).rjust(11), 400, 475, (255, 255, 255))
         print_ui(screen, text_font, "Жизней: " + str(fld.lives), 85, 475, (255, 255, 255))
         return fld
@@ -56,7 +41,7 @@ def game_over(scr):
     screen.fill((0, 0, 0))
     print_ui(screen, title_font, "Игра окончена!", 250, 150, (255, 255, 255))
     print_ui(screen, text_font, "Твой счёт: " + str(scr), 250, 200, (255, 255, 255))
-    menu_btn = Button("Главное меню", 250, 400, 200, 100)
+    menu_btn = Button("Меню", 250, 400, 200, 100)
     menu_btn.display(screen, text_font, pos)
     return menu_btn
 
@@ -74,6 +59,8 @@ if __name__ == '__main__':
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # таймер для математических игр
 
     game_state = "menu"
+    score, rounds = 0, 0
+    counter, field = None, None
 
     running = True
     while running:
@@ -87,7 +74,6 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if menu_return.hover(pos):
                             game_state = "menu"
-
                 if game_state == "menu":
                     buttons = show_menu()
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -97,10 +83,12 @@ if __name__ == '__main__':
                             counter = Counter(30)
                         elif buttons[1].hover(pos):
                             game_state = "math2"
+                            rounds = 0
+                            counter = Counter(30)
                         field = start_game(game_state)
 
                 if game_state == "math1":
-                    counter.display()
+                    counter.display(screen, number_font)
                     field.draw_field(screen)
                     field.draw_numbers(screen, text_font)
                     if event.type == pygame.USEREVENT:
@@ -131,7 +119,34 @@ if __name__ == '__main__':
                         score = field.score
 
                 if game_state == "math2":
-                    field.display_calc(screen, text_font, pos)
+                    counter.display(screen, number_font)
+                    buttons = field.display_game(screen, text_font, pos)
+                    if event.type == pygame.USEREVENT:
+                        counter.go_down()
+                        if counter.time == 0:
+                            if len(field.selected) == 0:
+                                field.lives -= 1
+                                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
+                                print_ui(screen, text_font, "Жизней: " + str(field.lives), 85, 475, (255, 255, 255))
+                            field.refresh(screen, text_font, number_font)
+                            if rounds < 15:
+                                rounds += 1
+                            counter = Counter(30 - rounds // 3 * 5)
+                            field.multiplier = rounds // 3 + 1
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        for i in buttons:
+                            if i.hover(pos):
+                                if not (field.answer[-1] in "+-/* " and i.text in "+-/*"):
+                                    field.answer += i.text
+                                    pygame.draw.rect(screen, (0, 0,0), pygame.Rect(0, 125, 500, 50))
+                                    print_ui(screen, number_font, field.answer[1:], 250, 150, (255, 255, 255))
+                                    break
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            field.check_answer(screen, text_font)
+                    if field.lives == 0:
+                        game_state = "gameover"
+                        score = field.score
 
         pygame.display.flip()
     clock.tick(15)

@@ -1,4 +1,5 @@
 from methods import *
+from random import randint
 
 def find_correct(q, num):
     """
@@ -176,7 +177,7 @@ class MathGame:
         Выбор ячейки.
         Если ячейка есть в множестве правильных ответов - игроку начисляются
         очки, ячейка отмечается зеленым и добавляется в множество уже выбранных.
-        Если ячейка правильная, но уже была выбрана - ничего не происходит.
+        Если ячейка правильная, но уже была выбрана - игроку дается об этом знать.
         Если ячейка неправильная - игрок теряет одну жизнь.
 
         Args:
@@ -184,20 +185,20 @@ class MathGame:
             myfont (pygame.font.Font): Используемый шрифт.
         """
         position = (self.x, self.y)
-        print(self.answers, self.selected)
+        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(315, 435, 200, 30))
         if position in self.answers:
             if position not in self.selected:
-                print("Правильно!")
                 pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(self.x * 50 + 125 + (1 + self.x) * 2,
                                                                   self.y * 50 + 125 + (1 + self.y) * 2, 46, 46))
                 self.selected.add(position)
                 self.score += 50 * self.multiplier
-                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(300, 400, 200, 100))
+                print_ui(screen, myfont, "  Правильно!", 400, 450, (0, 255, 0))
+                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(280, 460, 200, 50))
                 print_ui(screen, myfont, ("Счёт: " + str(self.score)).rjust(11), 400, 475, (255, 255, 255))
             else:
-                print("Уже выбрано!")
+                print_ui(screen, myfont, "Уже выбрано!", 400, 450, (125, 125, 125))
         else:
-            print("Неправильно!")
+            print_ui(screen, myfont, "Неправильно!", 400, 450, (255, 0, 0))
             self.lives -= 1
             pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
             print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475, (255, 255, 255))
