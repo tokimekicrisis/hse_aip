@@ -54,7 +54,8 @@ class Button:
     def hover(self, position):
         """
         Проверяет, находится ли курсор в данный момент на кнопке.
-        Это нужно, чтобы понимать, надо подсвечивать кнопку или нет.
+        Это нужно, чтобы понимать, надо подсвечивать кнопку или нет,
+        а также чтобы распознавать нажатие кнопки.
 
         Args:
             position (tuple): Позиция курсора.
@@ -126,5 +127,5 @@ class Counter:
             color = (255, 255, 255)
         else:
             color = (255, 0, 0)
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 63))
+        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(25, 415, 50, 50))
         print_ui(screen, myfont, str(self.time).ljust(2), 45, 450, color)

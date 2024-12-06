@@ -1,4 +1,4 @@
-from methods import *
+from source import *
 from random import randint
 
 class CalcGame:
@@ -81,7 +81,7 @@ class CalcGame:
                 else:
                     print_ui(screen, myfont, "Неправильно!", 400, 450, (255, 0, 0))
                     self.lives -= 1
-                    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
+                    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 450, 200, 100))
                     print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475, (255, 255, 255))
             except ZeroDivisionError:
                 print_ui(screen, myfont, "Делить на ноль нельзя!", 350, 450, (255, 0, 0))

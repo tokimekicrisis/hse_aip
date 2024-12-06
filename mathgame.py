@@ -1,4 +1,4 @@
-from methods import *
+from source import *
 from random import randint
 
 def find_correct(q, num):
@@ -107,9 +107,9 @@ class MathGame:
         x, y = 125, 125
         for row in range(5):
             for column in range(5):
-                if (row, column) in self.selected:
-                    continue
-                if row == self.x and column == self.y:
+                if (row, column) in self.selected and (row, column) in self.answers:
+                    color = (0, 255, 0)
+                elif row == self.x and column == self.y:
                     color = (255, 255, 0)
                 else:
                     color = (0, 0, 0)
@@ -136,9 +136,7 @@ class MathGame:
                     color = (0, 0, 0)
                 else:
                     color = (255, 255, 255)
-                number = myfont.render(str(self.numbers[row][column]), False, color)
-                text_rect = number.get_rect(center=(x + 25, y + 25))
-                screen.blit(number, text_rect)
+                print_ui(screen, myfont, str(self.numbers[row][column]), x + 25, y + 25, color)
                 y += 52
             x += 52
             y = 125
