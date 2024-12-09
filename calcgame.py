@@ -91,12 +91,15 @@ class CalcGame:
 
     def display_game(self, screen, myfont, pos):
         """
-        Выводит клавиатуру на экран и возвращает все кнопки для дальнейшего использования.
+        Выводит клавиатуру на экран и возвращает все клавиши для дальнейшего использования.
 
         Args:
             screen (pygame.Surface): Экран.
             myfont (pygame.font.Font): Используемый шрифт.
             pos (tuple): Позиция курсора.
+
+        Returns:
+            set: Клавиши
         """
         numbers = ("123", "456", "789", "0")
         signs = "+-/*"

@@ -1,11 +1,31 @@
-import pygame.draw
-
 from source import *
 from random import choice
 
 
 class WordGame:
+    """
+    Поле для игры №3 (на словарный запас).
+    Смысл игры - угадать слово из 5 букв за 6 попыток. Классический Вордл.
+
+    Attributes:
+        word (str): Загаданное слово.
+        game_ended (bool): Флаг конца игры.
+        grid (list): Таблица введенных букв (в формате 0 - нет в слове,
+        1 - есть на другом месте, 2 - есть на том же месте).
+        answer (str): Ответ, вводимый игроком.
+        letters (list): Таблица введенных букв (в формате букв).
+        x (int): x-координата вводимой игроком буквы.
+        y (int): y-координата вводимой игроком буквы.
+    """
+
     def __init__(self, word_list):
+        """
+        Создает поле. Загаданное слово случайно выбирается из списка.
+        Все остальные атрибуты нулевые или пустые.
+
+        Args:
+            word_list (list): Список возможных слов.
+        """
         self.word = choice(word_list)
         self.game_ended = False
         self.grid = [[0 for _ in range(5)] for _ in range(6)]
@@ -15,6 +35,13 @@ class WordGame:
         self.y = 0
 
     def draw_field(self, screen):
+        """
+        Рисует поле на экране. Цвет выбирается по
+        соответствующему элементу в self.grid.
+
+        Args:
+            screen (pygame.Surface): Экран.
+        """
         x, y = 125, 90
         for row in range(6):
             for column in range(5):
@@ -31,10 +58,18 @@ class WordGame:
             x = 125
 
     def draw_letters(self, screen, myfont):
+        """
+        Рисует буквы на экране. Цвет выбирается по
+        соответствующему элементу в self.grid.
+
+        Args:
+            screen (pygame.Surface): Экран.
+            myfont (pygame.font.Font): Используемый шрифт.
+        """
         x, y = 125, 90
         for row in range(6):
             for column in range(5):
-                if row == self.y and column == self.x:
+                if self.grid[row][column] > 0:
                     color = (0, 0, 0)
                 else:
                     color = (255, 255, 255)
@@ -44,6 +79,23 @@ class WordGame:
             x = 125
 
     def check_answer(self, screen, myfont):
+        """
+        Проверяет попытку. Если слова нет в словаре -
+        сообщает игроку и дает ввести слово еще раз.
+        Если есть - проверяет, какие буквы верные.
+        Если попытка равна слову - игрок побеждает,
+        игра кончается. Если попытка не равна слову
+        и была последней - игрок проигрывает, игра
+        тоже кончается.
+
+        Args:
+            screen (pygame.Surface): Экран.
+            myfont (pygame.font.Font): Используемый шрифт.
+
+        Returns:
+            str: Строка с одним из 3 возможных исходов: "invalid" (невалидный),
+            "correct" (верный), "incorrect" (неверный).
+        """
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 450, 500, 50))
         self.answer += "\n"
         word_check = False

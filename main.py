@@ -2,6 +2,7 @@ from source import *
 from mathgame import MathGame, questions
 from calcgame import CalcGame
 from wordgame import WordGame
+from spellgame import SpellGame
 
 
 def show_menu():
@@ -9,7 +10,7 @@ def show_menu():
     Показывает главное меню.
 
     Returns:
-        btns (tuple): Кнопки главного меню для дальнейшего использования.
+        tuple: Кнопки главного меню для дальнейшего использования.
     """
     screen.fill((0, 0, 0))
     print_ui(screen, title_font, "РАЗВИВАШКИ", 250, 40, (0, 255, 0))
@@ -18,7 +19,7 @@ def show_menu():
     mt1 = Button("Знание свойств чисел", 125, 200, 175, 150)
     mt2 = Button("Навыки простого счёта", 375, 200, 175, 150)
     ru1 = Button("Словарный запас (угадайка)", 125, 375, 175, 150)
-    ru2 = Button("", 375, 375, 175, 150)
+    ru2 = Button("Орфография (безударные гласные)", 375, 375, 175, 150)
     btns = (mt1, mt2, ru1, ru2)
     for btn in btns:
         btn.display(screen, text_font, pos)
@@ -30,10 +31,10 @@ def start_game(state):
     Начинает игру.
 
     Args:
-        state (str): Состояние игры, которую надо начать.
+        state (str): Тип игры, которую надо начать.
 
     Returns:
-        Объект MathGame, CalcGame, WordGame или SpellGame в зависимости от нужной игры.
+        MathGame, CalcGame, WordGame или SpellGame в зависимости от нужной игры.
     """
 
     screen.fill((0, 0, 0))
@@ -54,9 +55,22 @@ def start_game(state):
             fld = WordGame(f.readlines())
         print_ui(screen, text_font, "Угадай слово за 6 попыток!", 250, 60, (255, 255, 255))
         return fld
+    elif state == "rus2":
+        fld = SpellGame()
+        print_ui(screen, text_font, ("Счёт: " + str(fld.score)).rjust(11), 400, 475, (255, 255, 255))
+        print_ui(screen, text_font, "Жизней: " + str(fld.lives), 85, 475, (255, 255, 255))
+        print_ui(screen, text_font, "Какая буква пропущена", 250, 70, (255, 255, 255))
+        print_ui(screen, text_font, "во всех трех словах?", 250, 95, (255, 255, 255))
+        return fld
 
 
 def game_pause():
+    """
+    Показывает экран паузы.
+
+    Returns:
+        tuple: Кнопка меню и кнопка продолжения игры.
+    """
     screen.fill((0, 0, 0))
     print_ui(screen, title_font, "Пауза", 250, 150, (255, 255, 255))
     menu_btn = Button("Меню", 250, 300, 200, 50)
@@ -74,7 +88,7 @@ def game_over(scr):
         scr (int): Счет игрока.
 
     Returns:
-        menu_btn (Button): Кнопка главного меню.
+        Button: Кнопка главного меню.
     """
     screen.fill((0, 0, 0))
     print_ui(screen, title_font, "Игра окончена!", 250, 150, (255, 255, 255))
@@ -84,12 +98,24 @@ def game_over(scr):
     return menu_btn
 
 
-def game_rules(state, ruledict):
+def game_rules(state):
+    """
+    Показывает экран правил игры.
+
+    Args:
+        state (str): Вид игры, правила которой нужны
+
+    Returns:
+        Button: Кнопка перехода к игре.
+    """
     screen.fill((0, 0, 0))
-    print_ui(screen, title_font, "Правила", 250,  50, (255, 255, 255))
-    text = ruledict[state]
+    print_ui(screen, title_font, "Правила", 250, 50, (255, 255, 255))
+    text = rules[state]
     for num in range(len(text)):
-        print_ui(screen, text_font, text[i], 250, 125 + num * 25, (255, 255, 255))
+        print_ui(screen, text_font, text[num], 250, 125 + num * 25, (255, 255, 255))
+    play_btn = Button("Играть", 250, 400, 200, 50)
+    play_btn.display(screen, text_font, pos)
+    return play_btn
 
 
 if __name__ == '__main__':
@@ -102,7 +128,7 @@ if __name__ == '__main__':
     text_font = pygame.font.Font("resources/Monocraft.otf", 20)
     title_font = pygame.font.Font("resources/Monocraft.otf", 40)
     number_font = pygame.font.Font("resources/Monocraft.otf", 30)
-    pygame.time.set_timer(pygame.USEREVENT, 1000)  # таймер
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     game_state = "menu"
     prev_state = "menu"
@@ -114,7 +140,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
-                running = False  # если пользователь нажал крестик, игра кончается
+                running = False
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -126,16 +152,33 @@ if __name__ == '__main__':
                     buttons = show_menu()
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if buttons[0].hover(pos):
-                            game_state = "math1"
-                            rounds = 0
-                            counter = Counter(30)
+                            prev_state = "math1"
+                            game_state = "rules"
                         elif buttons[1].hover(pos):
-                            game_state = "math2"
-                            rounds = 0
-                            counter = Counter(30)
+                            prev_state = "math2"
+                            game_state = "rules"
                         elif buttons[2].hover(pos):
-                            game_state = "rus1"
-                        field = start_game(game_state)
+                            prev_state = "rus1"
+                            game_state = "rules"
+                        elif buttons[3].hover(pos):
+                            prev_state = "rus2"
+                            game_state = "rules"
+
+                if game_state == "rules":
+                    play = game_rules(prev_state)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if play.hover(pos):
+                            prev_state, game_state = "menu", prev_state
+                            if game_state != "rus1":
+                                rounds = 0
+                                if game_state == "rus2":
+                                    counter = Counter(10)
+                                else:
+                                    counter = Counter(30)
+                            field = start_game(game_state)
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            prev_state, game_state = "menu", "menu"
 
                 if game_state == "gameover":
                     menu_return = game_over(score)
@@ -164,6 +207,9 @@ if __name__ == '__main__':
                                 print_ui(screen, title_font, str(field.current), 250, 100, (0, 0, 255))
                             elif game_state == "rus1":
                                 print_ui(screen, text_font, "Угадай слово за 6 попыток!", 250, 60, (255, 255, 255))
+                            elif game_state == "rus2":
+                                print_ui(screen, text_font, "Какая буква пропущена", 250, 70, (255, 255, 255))
+                                print_ui(screen, text_font, "во всех трех словах?", 250, 95, (255, 255, 255))
 
                 if game_state == "math1":
                     counter.display(screen, number_font)
@@ -248,10 +294,42 @@ if __name__ == '__main__':
                                     field.x -= 1
                             else:
                                 key = event.unicode
-                                if key and key in "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" and len(field.answer) < 5:
+                                if key and key.lower() in "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" and len(field.answer) < 5:
                                     field.letters[field.y][field.x] = key.upper()
                                     field.x += 1
                                     field.answer += key
+
+                if game_state == "rus2":
+                    counter.display(screen, number_font)
+                    if event.type == pygame.USEREVENT:
+                        counter.go_down()
+                        if counter.time == 0:
+                            field.lives -= 1
+                            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
+                            print_ui(screen, text_font, "Жизней: " + str(field.lives), 85, 475, (255, 255, 255))
+                            field.refresh()
+                            if rounds < 8:
+                                rounds += 1
+                                counter = Counter(10)
+                            else:
+                                counter = Counter(5)
+                                field.multiplier = 3
+                    field.print_words(screen, text_font)
+                    if event.type == pygame.KEYDOWN:
+                        key = event.unicode
+                        if key and key.lower() in "абвгдеёжзийклмнопрстуфхцчшщъыьэюя":
+                            if field.check_answer(screen, number_font, text_font, key):
+                                field.refresh()
+                                if rounds < 8:
+                                    rounds += 1
+                                    counter = Counter(10)
+                                else:
+                                    counter = Counter(5)
+                                    field.multiplier = 3
+                    if field.lives == 0:
+                        game_state = "gameover"
+                        score = field.score
+
         pygame.display.flip()
     clock.tick(15)
 
