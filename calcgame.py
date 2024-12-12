@@ -62,6 +62,9 @@ class CalcGame:
         Args:
             screen (pygame.Surface): Экран.
             myfont (pygame.font.Font): Используемый шрифт.
+
+        Returns:
+            bool: True, если ответ правильный, False, если неправильный или некорректный.
         """
 
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(200, 435, 300, 30))
@@ -76,18 +79,26 @@ class CalcGame:
                         self.selected.add(self.answer)
                         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(280, 460, 200, 50))
                         print_ui(screen, myfont, ("Счёт: " + str(self.score)).rjust(11), 400, 475, (255, 255, 255))
+                        self.answer = " "
+                        return True
                     else:
                         print_ui(screen, myfont, "   Уже было!", 400, 450, (125, 125, 125))
+                        self.answer = " "
                 else:
                     print_ui(screen, myfont, "Неправильно!", 400, 450, (255, 0, 0))
                     self.lives -= 1
-                    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 450, 200, 100))
+                    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 465, 200, 100))
                     print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475, (255, 255, 255))
+                    self.answer = " "
+                    return False
             except ZeroDivisionError:
                 print_ui(screen, myfont, "Делить на ноль нельзя!", 350, 450, (255, 0, 0))
+                self.answer = " "
+                return False
             except Exception:
                 print_ui(screen, myfont, "Некорректное выражение!", 350, 450, (255, 0, 0))
-            self.answer = " "
+                self.answer = " "
+                return False
 
     def display_game(self, screen, myfont, pos):
         """

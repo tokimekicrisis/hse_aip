@@ -118,6 +118,10 @@ def game_rules(state):
     return play_btn
 
 
+screen = None
+text_font, title_font, number_font = None, None, None
+pos = (0, 0)
+
 if __name__ == '__main__':
     pygame.init()
     size = width, height = 500, 500

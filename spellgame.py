@@ -92,6 +92,9 @@ class SpellGame:
             myfont1 (pygame.font.Font): Шрифт для надписей "Правильно!" и "Неправильно!"
             myfont2 (pygame.font.Font): Шрифт для введенной буквы.
             key (str): Введенная буква.
+
+        Returns:
+            bool: True, если ответ правильный, False, если неправильный.
         """
         found = False
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(200, 435, 300, 30))

@@ -181,6 +181,9 @@ class MathGame:
         Args:
             screen (pygame.Surface): Экран.
             myfont (pygame.font.Font): Используемый шрифт.
+
+        Returns:
+            bool: True, если ответ правильный, False, если неправильный.
         """
         position = (self.x, self.y)
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(315, 435, 200, 30))
@@ -193,6 +196,7 @@ class MathGame:
                 print_ui(screen, myfont, "  Правильно!", 400, 450, (0, 255, 0))
                 pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(280, 460, 200, 50))
                 print_ui(screen, myfont, ("Счёт: " + str(self.score)).rjust(11), 400, 475, (255, 255, 255))
+                return True
             else:
                 print_ui(screen, myfont, "Уже выбрано!", 400, 450, (125, 125, 125))
         else:
@@ -200,6 +204,7 @@ class MathGame:
             self.lives -= 1
             pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 400, 200, 100))
             print_ui(screen, myfont, "Жизней: " + str(self.lives), 85, 475, (255, 255, 255))
+            return False
 
 
 questions = {0: "Выбери все четные числа!",

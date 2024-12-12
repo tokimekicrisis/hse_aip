@@ -93,7 +93,7 @@ class WordGame:
             myfont (pygame.font.Font): Используемый шрифт.
 
         Returns:
-            str: Строка с одним из 3 возможных исходов: "invalid" (невалидный),
+            str: Строка с одним из 3 возможных исходов: "invalid" (некорректный),
             "correct" (верный), "incorrect" (неверный).
         """
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 450, 500, 50))
