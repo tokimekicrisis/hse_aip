@@ -18,7 +18,7 @@ def print_ui(screen, myfont, text, x, y, color):
     screen.blit(line, text_rect)
 
 
-class Button:
+class Button: # частично самоплагиат
     """
     Кнопка с текстом. При нажатии что-то делает (что именно - задано в main.py).
 
