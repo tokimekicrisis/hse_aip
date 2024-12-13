@@ -52,6 +52,7 @@ class Button:
         self.x, self.y = x, y
         self.left, self.top = self.btn.left, self.btn.top
 
+    # самоплагиат, все остальное - 100% оригинал
     def hover(self, position):
         """
         Проверяет, находится ли курсор в данный момент на кнопке.
@@ -69,6 +70,7 @@ class Button:
             if self.top < position[1] < self.top + self.height:
                 return True
         return False
+    # конец самоплагиата
 
     def display(self, screen, myfont, pos):
         """
