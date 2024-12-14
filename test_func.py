@@ -50,6 +50,12 @@ class Test(unittest.TestCase):
         field.current = 4
         self.assertFalse(field.check_answer(main.screen, main.text_font))
 
+    def test_calc_check_unknown_error(self):
+        field = main.CalcGame()
+        field.answer = "вообще-то это невозможно, но..."
+        field.current = 4
+        self.assertFalse(field.check_answer(main.screen, main.text_font))
+
     def test_word_check_correct(self):
         with open("resources/words.txt", "r", encoding="utf-8") as f:
             field = main.WordGame(f.readlines())
